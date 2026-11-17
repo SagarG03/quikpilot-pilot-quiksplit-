@@ -46,10 +46,7 @@ export function computeShares(expense) {
       return participants.map((p) => splitDetails[p]);
 
     case "percent":
-      return weighted(
-        amountMinor,
-        participants.map((p) => Math.round(splitDetails[p] * 100)),
-      );
+      return participants.map((p) => Math.round((amountMinor * splitDetails[p]) / 100));
 
     case "shares":
       return weighted(
