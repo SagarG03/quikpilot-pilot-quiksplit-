@@ -36,6 +36,23 @@ describe("computeBalances", () => {
     addExpense(g, { description: "Taxi", amountMinor: 1000, paidBy: "u1", participants: ["u1", "u2", "u3"] });
     assertBalanced(computeBalances(g));
   });
+
+  it("[QP-QUIKS-1-9] Group balances net to zero after a percentage split with rounding", () => {
+    const g = group();
+    addExpense(g, {
+      description: "Lunch",
+      amountMinor: 10,
+      paidBy: "u1",
+      participants: ["u1", "u2", "u3"],
+      splitType: "percent",
+      splitDetails: { u1: 33, u2: 33, u3: 34 },
+    });
+    const b = computeBalances(g);
+    expect(b.u1).toBe(7);
+    expect(b.u2).toBe(-3);
+    expect(b.u3).toBe(-4);
+    expect(b.u1 + b.u2 + b.u3).toBe(0);
+  });
 });
 
 describe("settleUp", () => {

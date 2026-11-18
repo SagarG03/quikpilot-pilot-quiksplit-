@@ -65,6 +65,17 @@ describe("computeShares", () => {
     expect(sum(shares)).toBe(1001);
   });
 
+  it("[QP-QUIKS-1-8] Percentage shares sum to the amount, leftover unit goes to the largest remainder, in participant order", () => {
+    const shares = computeShares({
+      amountMinor: 10,
+      participants,
+      splitType: "percent",
+      splitDetails: { a: 33, b: 33, c: 34 },
+    });
+    expect(shares).toEqual([3, 3, 4]);
+    expect(sum(shares)).toBe(10);
+  });
+
   it("rejects an unknown split type", () => {
     expect(() => computeShares({ amountMinor: 100, participants, splitType: "random" })).toThrow("Unknown split type");
   });
