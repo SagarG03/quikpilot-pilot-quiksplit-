@@ -71,6 +71,40 @@ describe("validateExpense currency", () => {
       "Currency must be a 3-letter code.",
     );
   });
+
+  it("[QP-QUIKS-2-7] Converts a lowercase currency code at that currency's rate and stores it in uppercase", () => {
+    const lower = validateExpense({ ...base, currency: "usd" }, memberIds());
+    const upper = validateExpense({ ...base, currency: "USD" }, memberIds());
+    expect(lower.amountMinor).toBe(upper.amountMinor);
+    expect(lower.original.currency).toBe("USD");
+  });
+
+  it("[QP-QUIKS-2-8] Rejects an unsupported three-letter currency code before the expense is saved", () => {
+    let error;
+    try {
+      validateExpense({ ...base, currency: "XYZ" }, memberIds());
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeInstanceOf(ValidationError);
+    expect(error.field).toBe("currency");
+  });
+
+  it("[QP-QUIKS-2-9] Names the supported codes in the rejection for an unsupported currency", () => {
+    let error;
+    try {
+      validateExpense({ ...base, currency: "XYZ" }, memberIds());
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe("Currency must be one of: INR, USD, EUR, GBP, AED.");
+  });
+
+  it("[QP-QUIKS-2-10] Keeps the three-letter message for a code that is not three letters", () => {
+    expect(() => validateExpense({ ...base, currency: "US" }, memberIds())).toThrow(
+      "Currency must be a 3-letter code.",
+    );
+  });
 });
 
 describe("validateExpense split", () => {
