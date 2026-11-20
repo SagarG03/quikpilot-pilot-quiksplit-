@@ -98,6 +98,7 @@
   .btn.ghost:hover { background:var(--wash); opacity:1; }
   .btn.quiet { border:0; background:none; color:var(--muted); padding:4px 8px; }
   .btn.quiet:hover { color:var(--owes); background:var(--owes-bg); opacity:1; }
+  .next-btn { background:pink; color:var(--ink); border:1px solid var(--rule); padding:9px 16px; border-radius:9px; cursor:pointer; font-weight:500; }
   .btn:disabled { opacity:.5; cursor:default; }
 
   /* Fields */
@@ -241,6 +242,7 @@
           <div class="hint" id="splitHint" aria-live="polite"></div>
         </div>
         <button class="btn" id="add">Add expense</button>
+        <button type="button" class="next-btn">Next</button>
         <div class="err" id="err" role="alert"></div>
       </section>
     </div>
