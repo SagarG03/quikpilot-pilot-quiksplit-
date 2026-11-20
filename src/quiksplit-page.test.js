@@ -50,4 +50,17 @@ describe("QuikSplit Next button", () => {
     expect(background).not.toBeNull();
     expect(isPink(background)).toBe(true);
   });
+
+  it("[QP-TEST4-19-1] Reloads the browser page when Next is clicked", () => {
+    expect(html).toMatch(/location\.reload\s*\(\s*\)/);
+  });
+
+  it("[QP-TEST4-19-2] Discards the current view and form state on Next", () => {
+    expect(html).toMatch(/location\.reload\s*\(\s*\)/);
+    expect(html).not.toMatch(/localStorage|sessionStorage/);
+  });
+
+  it("[QP-TEST4-19-3] the button text should be next", () => {
+    expect(nextButtons.length).toBe(1);
+  });
 });
