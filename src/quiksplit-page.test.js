@@ -64,3 +64,27 @@ describe("QuikSplit Next button", () => {
     expect(nextButtons.length).toBe(1);
   });
 });
+
+describe("QuikSplit group refresh", () => {
+  it("[QP-TESTI-13-1] Refresh button is shown on the same row as the group title", () => {
+    const header = html.match(/<header class="head">([\s\S]*?)<\/header>/i);
+    expect(header).not.toBeNull();
+    expect(header[1]).toMatch(/<h1 id="title">/);
+    expect(header[1]).toMatch(/<button\b[^>]*\bid\s*=\s*"refresh"[^>]*>/i);
+  });
+
+  it("[QP-TESTI-13-2] Pressing refresh reloads balances and settle-up payments", () => {
+    expect(html).toMatch(/refresh[\s\S]{0,600}loadGroup\(current\.id\)/);
+    expect(html).toMatch(/fetch\(`\/api\/groups\/\$\{id\}`\)/);
+  });
+
+  it("[QP-TESTI-13-3] Refresh button shows busy state and ignores repeat presses", () => {
+    expect(html).toMatch(/refresh[\s\S]{0,800}\.disabled\s*=\s*true/);
+    expect(html).toMatch(/refresh[\s\S]{0,800}if \((refreshing|busy)\)\s*return/);
+  });
+
+  it("[QP-TESTI-13-4] Failed refresh keeps existing figures and shows an error", () => {
+    expect(html).toMatch(/refresh[\s\S]{0,800}catch[\s\S]{0,300}showError\(/);
+    expect(html).toMatch(/did not complete/);
+  });
+});
