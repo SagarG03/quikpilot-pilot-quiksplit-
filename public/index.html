@@ -185,7 +185,7 @@
   <main class="panel">
     <header class="head">
       <div>
-        <h1 id="title">QuikSplit</h1>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1 id="title">QuikSplit</h1><button type="button" class="btn ghost sm" id="refresh">Refresh</button></div>
         <div class="people" id="people"></div>
       </div>
       <div class="ledger" id="ledger" role="status"></div>
@@ -294,7 +294,9 @@ async function loadGroups() {
 }
 
 async function loadGroup(id) {
-  current = await (await fetch(`/api/groups/${id}`)).json();
+  const res = await fetch(`/api/groups/${id}`);
+  if (!res.ok) throw new Error(`group ${res.status}`);
+  current = await res.json();
   const nameOf = (uid) => current.members.find((m) => m.id === uid)?.name ?? uid;
   const memberOf = (uid) => current.members.find((m) => m.id === uid) ?? { id: uid, name: uid };
 
@@ -317,6 +319,30 @@ async function loadGroup(id) {
   await loadSummary();
   await loadHistory(true);
 }
+
+let refreshing = false;
+
+/** Re-fetches the open group and re-renders everything from the response; one request at a time. */
+async function refreshGroup() {
+  if (refreshing) return;
+  if (!current) return;
+  refreshing = true;
+  const btn = $("refresh");
+  const before = current;
+  btn.disabled = true;
+  btn.textContent = "Refreshing...";
+  try {
+    await loadGroup(current.id);
+  } catch (e) {
+    current = before;
+    showError("The refresh did not complete. The figures on screen are unchanged.");
+  } finally {
+    refreshing = false;
+    btn.disabled = false;
+    btn.textContent = "Refresh";
+  }
+}
+$("refresh").onclick = refreshGroup;
 
 /** Each member's balance as a bar from a zero line, and a check that the whole ledger sums to zero. */
 function renderBalances() {
