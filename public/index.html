@@ -215,6 +215,7 @@
         <ul class="hist" id="history"></ul>
         <div class="foot">
           <div class="info" id="pageInfo"></div>
+          <button class="btn ghost sm" id="open">Open</button>
           <button class="btn ghost sm" id="more" style="display:none">Load more</button>
         </div>
       </section>
@@ -415,6 +416,7 @@ async function loadHistory(reset) {
     $("history").innerHTML = `<li class="empty" style="display:block">${sectionFailed("The expense list")}</li>`;
     $("pageInfo").textContent = "";
     $("more").style.display = "none";
+    $("open").style.display = "none";
     return;
   }
   const res = await r.json();
@@ -433,6 +435,7 @@ async function loadHistory(reset) {
   document.querySelectorAll("#history button").forEach((b) => { b.onclick = () => removeExpense(b.dataset.id); });
   $("pageInfo").textContent = `Showing ${shown.length} of ${res.total}`;
   $("more").style.display = res.hasMore ? "inline-block" : "none";
+  $("open").style.display = res.hasMore ? "inline-block" : "none";
 }
 
 async function removeExpense(id) {
@@ -483,6 +486,7 @@ function updateHint() {
 
 document.querySelectorAll("#seg button").forEach((b) => { b.onclick = () => { splitType = b.dataset.type; renderSplitDetails(); }; });
 $("more").onclick = () => { page += 1; loadHistory(false); };
+$("open").onclick = () => { page += 1; loadHistory(false); };
 ["fCategory", "fFrom", "fTo"].forEach((id) => { $(id).onchange = () => loadHistory(true); });
 ["amount", "currency"].forEach((id) => { $(id).oninput = updateHint; });
 
