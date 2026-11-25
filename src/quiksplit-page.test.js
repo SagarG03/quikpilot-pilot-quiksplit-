@@ -88,3 +88,17 @@ describe("QuikSplit group refresh", () => {
     expect(html).toMatch(/did not complete/);
   });
 });
+
+describe("QuikSplit Open button", () => {
+  it("[QP-TESTI-15-1] Home page shows an Open button", () => {
+    const openButtons = [...html.matchAll(/<button\b[^>]*>\s*Open\s*<\/button>/gi)];
+    expect(openButtons.length).toBe(1);
+    expect(openButtons[0][0]).not.toMatch(/display\s*:\s*none/i);
+  });
+
+  it("[QP-TESTI-15-2] Open moves to the next page of the list in the same view", () => {
+    expect(html).toMatch(/page\s*(\+\+|\+=\s*1|=\s*page\s*\+\s*1)[\s\S]{0,200}loadHistory\(false\)/);
+    expect(html).toMatch(/<button\b[^>]*>\s*Open\s*<\/button>/i);
+    expect(html).not.toMatch(/location\.(href\s*=|assign\(|replace\()/);
+  });
+});
