@@ -102,3 +102,50 @@ describe("QuikSplit Open button", () => {
     expect(html).not.toMatch(/location\.(href\s*=|assign\(|replace\()/);
   });
 });
+
+describe("QuikSplit neutral action button", () => {
+  const mainHtml = html.match(/<main\b[\s\S]*?<\/main>/i)[0];
+  const actionButtons = [...html.matchAll(/<button\b[^>]*\bid\s*=\s*"neutral-action"[^>]*>[\s\S]*?<\/button>/gi)];
+  const openTagOf = (m) => m[0].match(/^<button\b[^>]*>/i)[0];
+  const labelOf = (m) => m[0].replace(/^<button\b[^>]*>/i, "").replace(/<\/button>$/i, "").trim();
+
+  it("[QP-TESTI-18-1] Home page shows exactly one new button in the main content area", () => {
+    const mainButtons = mainHtml.match(/<button\b[^>]*>/gi) || [];
+    expect(mainButtons.length).toBe(10);
+    expect(actionButtons.length).toBe(1);
+    expect(mainHtml).toMatch(/<button\b[^>]*\bid\s*=\s*"neutral-action"[^>]*>/i);
+  });
+
+  it("[QP-TESTI-18-2] New button displays a non-empty placeholder label", () => {
+    expect(actionButtons.length).toBe(1);
+    expect(labelOf(actionButtons[0]).length).toBeGreaterThan(0);
+    expect(openTagOf(actionButtons[0])).not.toMatch(/\bhidden\b|display\s*:\s*none|visibility\s*:\s*hidden/i);
+  });
+
+  it("[QP-TESTI-18-3] Clicking the new button changes no stored data", () => {
+    expect(actionButtons.length).toBe(1);
+    const onclick = (openTagOf(actionButtons[0]).match(/\bonclick\s*=\s*"([^"]*)"/i) || [])[1] || "";
+    expect(onclick).not.toMatch(/fetch|XMLHttpRequest|localStorage|sessionStorage|POST|PUT|PATCH|DELETE/i);
+    expect(html).not.toMatch(/localStorage|sessionStorage/);
+  });
+
+  it("[QP-TESTI-18-4] Clicking the new button does not navigate to an external origin", () => {
+    expect(actionButtons.length).toBe(1);
+    const tag = openTagOf(actionButtons[0]);
+    expect(tag).not.toMatch(/\bhref\s*=/i);
+    const onclick = (tag.match(/\bonclick\s*=\s*"([^"]*)"/i) || [])[1] || "";
+    expect(onclick).not.toMatch(/location|window\.open|https?:/i);
+  });
+
+  it("[QP-TESTI-18-5] New button is keyboard-operable with an accessible name", () => {
+    expect(actionButtons.length).toBe(1);
+    const tag = openTagOf(actionButtons[0]);
+    const label = labelOf(actionButtons[0]);
+    expect(label.length).toBeGreaterThan(0);
+    expect(tag).not.toMatch(/tabindex\s*=\s*"-1"/i);
+    expect(tag).not.toMatch(/\bdisabled\b/i);
+    expect(tag).not.toMatch(/aria-hidden\s*=\s*"true"/i);
+    const ariaLabel = (tag.match(/aria-label\s*=\s*"([^"]*)"/i) || [])[1];
+    expect(ariaLabel ?? label).toBe(label);
+  });
+});
