@@ -119,3 +119,28 @@ describe("QuikSplit TESTI Refresh control", () => {
     expect(tag).not.toMatch(/display\s*:\s*none/i);
   });
 });
+
+describe("QuikSplit test button", () => {
+  const testButtons = [...html.matchAll(/<button\b[^>]*>\s*test button\s*<\/button>/gi)];
+
+  it("[QP-TESTI-20-1] Home page shows a button labelled \"test button\"", () => {
+    expect(testButtons.length).toBe(1);
+  });
+
+  it("[QP-TESTI-20-2] Clicking the test button leaves the page and data unchanged", () => {
+    expect(testButtons.length).toBe(1);
+    const openTag = testButtons[0][0].match(/^<button\b[^>]*>/i)[0];
+    expect(openTag).not.toMatch(/\bon[a-z]+\s*=/i);
+    expect(openTag).not.toMatch(/\b(href|formaction)\s*=/i);
+  });
+
+  it("[QP-TESTI-20-3] Test button is keyboard-reachable and announced with its label", () => {
+    expect(testButtons.length).toBe(1);
+    const openTag = testButtons[0][0].match(/^<button\b[^>]*>/i)[0];
+    expect(openTag).not.toMatch(/tabindex\s*=\s*"-1"/i);
+    expect(openTag).not.toMatch(/display\s*:\s*none/i);
+    expect(openTag).not.toMatch(/\bhidden\b/i);
+    const label = (openTag.match(/\baria-label\s*=\s*"([^"]*)"/i) || [])[1];
+    if (label !== undefined) expect(label.trim()).toBe("test button");
+  });
+});
