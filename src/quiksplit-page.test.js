@@ -74,7 +74,7 @@ describe("QuikSplit group refresh", () => {
   });
 
   it("[QP-TESTI-13-2] Pressing refresh reloads balances and settle-up payments", () => {
-    expect(html).toMatch(/refresh[\s\S]{0,600}loadGroup\(current\.id\)/);
+    expect(html).toMatch(/refresh[\s\S]{0,300}location\.reload\s*\(\s*\)/);
     expect(html).toMatch(/fetch\(`\/api\/groups\/\$\{id\}`\)/);
   });
 
