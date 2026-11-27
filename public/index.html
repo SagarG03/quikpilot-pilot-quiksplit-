@@ -343,7 +343,7 @@ async function refreshGroup() {
     btn.textContent = "Refresh";
   }
 }
-$("refresh").onclick = refreshGroup;
+$("refresh").onclick = () => location.reload();
 
 /** Each member's balance as a bar from a zero line, and a check that the whole ledger sums to zero. */
 function renderBalances() {
