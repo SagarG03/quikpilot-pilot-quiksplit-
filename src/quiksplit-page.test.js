@@ -74,7 +74,7 @@ describe("QuikSplit group refresh", () => {
   });
 
   it("[QP-TESTI-13-2] Pressing refresh reloads balances and settle-up payments", () => {
-    expect(html).toMatch(/refresh[\s\S]{0,600}loadGroup\(current\.id\)/);
+    expect(html).toMatch(/refresh[\s\S]{0,300}location\.reload\s*\(\s*\)/);
     expect(html).toMatch(/fetch\(`\/api\/groups\/\$\{id\}`\)/);
   });
 
@@ -100,5 +100,22 @@ describe("QuikSplit Open button", () => {
     expect(html).toMatch(/page\s*(\+\+|\+=\s*1|=\s*page\s*\+\s*1)[\s\S]{0,200}loadHistory\(false\)/);
     expect(html).toMatch(/<button\b[^>]*>\s*Open\s*<\/button>/i);
     expect(html).not.toMatch(/location\.(href\s*=|assign\(|replace\()/);
+  });
+});
+
+describe("QuikSplit TESTI Refresh control", () => {
+  it("[QP-TESTI-12-1] Reloads the entire page when Refresh is clicked", () => {
+    expect(html).toMatch(/refresh[\s\S]{0,800}location\.reload\(\s*\)/);
+  });
+
+  it("[QP-TESTI-12-2] Refresh never navigates to a URL from input or an external origin", () => {
+    expect(html).not.toMatch(/location\.(href\s*=|assign\(|replace\()/);
+  });
+
+  it("[QP-TESTI-12-3] Refresh is keyboard operable with an accessible name", () => {
+    expect(html).toMatch(/<button\b[^>]*\bid\s*=\s*"refresh"[^>]*>\s*Refresh\s*<\/button>/i);
+    const tag = html.match(/<button\b[^>]*\bid\s*=\s*"refresh"[^>]*>/i)[0];
+    expect(tag).not.toMatch(/tabindex\s*=\s*"-1"/i);
+    expect(tag).not.toMatch(/display\s*:\s*none/i);
   });
 });
